@@ -59,7 +59,46 @@ XARGS := xargs -r
 LICENSE_TEMPLATE ?= $(ROOT_DIR)/scripts/LICENSE_TEMPLATES
 
 # ==============================================================================
-# Targets
+# Build definition
+
+GO_SUPPORTED_VERSIONS ?= 1.18|1.19|1.20
+GO_LDFLAGS += -X $(VERSION_PACKAGE).GitVersion=$(VERSION) \
+	-X $(VERSION_PACKAGE).GitCommit=$(GIT_COMMIT) \
+	-X $(VERSION_PACKAGE).GitTreeState=$(GIT_TREE_STATE) \
+	-X $(VERSION_PACKAGE).BuildDate=$(shell date -u +'%Y-%m-%dT%H:%M:%SZ')
+ifneq ($(DLV),)
+	GO_BUILD_FLAGS += -gcflags "all=-N -l"
+	LDFLAGS = ""
+endif
+GO_BUILD_FLAGS += -ldflags "$(GO_LDFLAGS)"
+
+ifeq ($(GOOS),windows)
+	GO_OUT_EXT := .exe
+endif
+
+ifeq ($(ROOT_PACKAGE),)
+	$(error the variable ROOT_PACKAGE must be set prior to including golang.mk)
+endif
+
+GOPATH := $(shell go env GOPATH)
+ifeq ($(origin GOBIN), undefined)
+	GOBIN := $(GOPATH)/bin
+endif
+
+COMMANDS ?= $(filter-out %.md, $(wildcard ${ROOT_DIR}/cmd/*))
+BINS ?= $(foreach cmd,${COMMANDS},$(notdir ${cmd}))
+
+ifeq (${COMMANDS},)
+  $(error Could not determine COMMANDS, set ROOT_DIR or run in source dir)
+endif
+ifeq (${BINS},)
+  $(error Could not determine BINS, set ROOT_DIR or run in source dir)
+endif
+
+EXCLUDE_TESTS=github.com/kubecub/CloudBuildAI/test
+
+# ==============================================================================
+# Build
 
 ## all: Build all the necessary targets.
 .PHONY: all
@@ -67,10 +106,7 @@ all: tidy add-copyright lint cover build
 
 ## build: Build binaries by default.
 .PHONY: build
-build: 
-	@echo "$(shell go version)"
-	@echo "===========> Building binary $(BUILDAPP) *[Git Info]: $(VERSION)-$(GIT_COMMIT)"
-	@export CGO_ENABLED=0 && chmod +x ./scripts/build.sh && ./scripts/build.sh
+build: go.build.verify $(addprefix go.build., $(addprefix $(PLATFORM)., $(BINS)))
 
 ## build.%: Builds a binary of the specified directory.
 .PHONY: build.%
@@ -78,8 +114,31 @@ build.%:
 	@echo "$(shell go version)"
 	@echo "===========> Building binary $(BUILDAPP) *[Git Info]: $(VERSION)-$(GIT_COMMIT)"
 	@export CGO_ENABLED=0 && GOOS=linux go build -o $(BUILDAPP)/$*/ -ldflags '-s -w' $*/example/$(BUILDFILE)
-	@export CGO_ENABLED=0 && GOOS=linux go build -o $(BUILDAPP)/$*/ -ldflags '-s -w' $*/example/$(BUILDFILE)
 
+.PHONY: go.build.verify
+go.build.verify:
+ifneq ($(shell $(GO) version | grep -q -E '\bgo($(GO_SUPPORTED_VERSIONS))\b' && echo 0 || echo 1), 0)
+	$(error unsupported go version. Please make install one of the following supported version: '$(GO_SUPPORTED_VERSIONS)')
+endif
+
+.PHONY: go.build.%
+go.build.%:
+	$(eval COMMAND := $(word 2,$(subst ., ,$*)))
+	$(eval PLATFORM := $(word 1,$(subst ., ,$*)))
+	$(eval OS := $(word 1,$(subst _, ,$(PLATFORM))))
+	$(eval ARCH := $(word 2,$(subst _, ,$(PLATFORM))))
+	@echo "=====> COMMAND=$(COMMAND)"
+	@echo "=====> PLATFORM=$(PLATFORM)"
+	@echo "=====> BIN_DIR=$(BIN_DIR)"
+	@echo "===========> Building binary $(COMMAND) $(VERSION) for $(OS)_$(ARCH)"
+	@mkdir -p $(OUTPUT_DIR)/platforms/$(OS)/$(ARCH)
+	@CGO_ENABLED=0 GOOS=$(OS) GOARCH=$(ARCH) $(GO) build $(GO_BUILD_FLAGS) -o $(OUTPUT_DIR)/platforms/$(OS)/$(ARCH)/$(COMMAND)$(GO_OUT_EXT) $(ROOT_PACKAGE)/cmd/$(COMMAND)
+
+.PHONY: go.build.multiarch
+go.build.multiarch: go.build.verify $(foreach p,$(PLATFORMS),$(addprefix go.build., $(addprefix $(p)., $(BINS))))
+
+# ==============================================================================
+# Targets
 
 ## tidy: tidy go.mod
 .PHONY: tidy

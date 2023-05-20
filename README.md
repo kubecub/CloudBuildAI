@@ -201,7 +201,7 @@ And use `k8sgpt analyze` --explain to get a more detailed explanation of the iss
   <summary>Work with actions</summary>
 
 Actions provide handling of PR and issue.
-We used the bot [🚀@kubbot](https://github.com/kubbot), It can detect issues in Chinese and translate them to English, and you can interact with it using the command `/comment`.
+We used the bot [🚀@cba](https://github.com/cba), It can detect issues in Chinese and translate them to English, and you can interact with it using the command `/comment`.
 
 Comment in an issue:
 

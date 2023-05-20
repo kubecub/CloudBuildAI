@@ -18,14 +18,14 @@ var (
 	shortPrint bool
 	output     string
 )
-var sealerErr error
+var cbaErr error
 
 func NewVersionCmd() *cobra.Command {
 	versionCmd := &cobra.Command{
 		Use:     "version",
 		Short:   "Print version info",
 		Args:    cobra.NoArgs,
-		Example: `sealer version`,
+		Example: `cba version`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			// Validate validates the provided options.
 			if output != "" && output != "yaml" && output != "json" {
@@ -45,7 +45,7 @@ func NewVersionCmd() *cobra.Command {
 
 func PrintInfo() error {
 	OutputInfo := &version.Output{}
-	OutputInfo.SealerVersion = version.Get()
+	OutputInfo.CbaVersion = version.Get()
 
 	if err := PrintToStd(OutputInfo); err != nil {
 		return err
@@ -76,5 +76,5 @@ func PrintToStd(OutputInfo *version.Output) error {
 		// However, we follow a policy of never panicking.
 		return fmt.Errorf("versionOptions were not validated: --output=%q should have been rejected", output)
 	}
-	return sealerErr
+	return cbaErr
 }

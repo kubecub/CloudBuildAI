@@ -30,7 +30,7 @@ func Get() Info {
 	}
 }
 
-// GetSingleVersion returns single version of sealer
+// GetSingleVersion returns single version of cba
 func GetSingleVersion() string {
 	return gitVersion
 }
