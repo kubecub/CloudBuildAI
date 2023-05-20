@@ -1,3 +1,7 @@
+// Copyright © 2023 KubeCub & Xinwei Xiong(cubxxw). All rights reserved.
+// Licensed under the MIT License (the "License");
+// you may not use this file except in compliance with the License.
+
 package main
 
 import (
@@ -7,8 +11,8 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	"github.com/kubecub/CloudBuildAI/pkg/common"
 	gpt3 "github.com/kubecub/CloudBuildAI/pkg/client"
+	"github.com/kubecub/CloudBuildAI/pkg/common"
 )
 
 func main() {
