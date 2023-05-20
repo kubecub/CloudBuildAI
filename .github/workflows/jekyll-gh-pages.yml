@@ -34,8 +34,8 @@ jobs:
         uses: actions/jekyll-build-pages@v1
         with:
           source: ./docs
-          BOT_GITHUB_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN }}
-          destination: ./docs/site
+          token: "${{ secrets.BOT_GITHUB_TOKEN }}"
+          destination: ./docs/_site
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
 
