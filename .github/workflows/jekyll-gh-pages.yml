@@ -35,7 +35,7 @@ jobs:
         with:
           source: ./docs
           token: "${{ secrets.BOT_GITHUB_TOKEN }}"
-          destination: ./docs/_site
+          destination: ./_site
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
 
