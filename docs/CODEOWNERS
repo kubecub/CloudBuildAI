@@ -5,7 +5,7 @@
 # the repo. Unless a later match takes precedence,
 # @cubxxw and @kubbot will be requested for
 # review when someone opens a pull request.
-*       @cubxxw @github/kubecub @kubbot
+*       @cubxxw  @kubbot
 
 # Order is important; the last matching pattern takes the most
 # precedence. When someone opens a pull request that only
@@ -22,7 +22,7 @@
 # be identified in the format @org/team-name. Teams must have
 # explicit write access to the repository. In this example,
 # the kubecub team in the github organization owns all .txt files.
-*.txt @github/kubecub
+*.txt @cubxxw
 
 # In this example, @cubxxw owns any files in the build/
 # directory at the root of the repository and any of its
