@@ -3,6 +3,7 @@
         <a href="https://docker.nsddd.top">CloudBuildAI</a><br>
     </b>
 </h1>
+
 <h3 align="center" style="border-bottom: none">
       ⭐️  AI automatically generates Docker and K8s deployment files.  ⭐️ <br>
 <h3>
@@ -21,7 +22,8 @@
 
 <p align="center">
     <a href="./README.md"><b>English</b></a> •
-    <a href="./README_zh-CN.md"><b>中文</b></a>
+    <a href="./README_zh-CN.md"><b>中文</b></a> •
+    <a href="https://kubecub.github.io/CloudBuildAI"><b>Docs</b></a>
 </p>
 
 </p>
