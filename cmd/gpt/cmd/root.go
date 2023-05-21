@@ -9,11 +9,10 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/kubecub/CloudBuildAI/pkg/log"
 	"github.com/kubecub/CloudBuildAI/pkg/common"
 
+	"github.com/kubecub/CloudBuildAI/pkg/log"
 	"github.com/kubecub/CloudBuildAI/pkg/version"
-	"github.com/kubecub/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )

@@ -8,6 +8,7 @@
 ROOT_PACKAGE=github.com/kubecub/feishu-sheet-parser
 OUT_DIR=$(REPO_ROOT)/_output
 # ==============================================================================
+
 # define the default goal
 #
 
@@ -52,6 +53,29 @@ FINDS := find $(CODE_DIRS)
 ifndef V
 MAKEFLAGS += --no-print-directory
 endif
+
+# The OS must be linux when building docker images
+PLATFORMS ?= linux_amd64 linux_arm64
+# The OS can be linux/windows/darwin when building binaries
+# PLATFORMS ?= darwin_amd64 windows_amd64 linux_amd64 linux_arm64
+
+# Set a specific PLATFORM
+ifeq ($(origin PLATFORM), undefined)
+	ifeq ($(origin GOOS), undefined)
+		GOOS := $(shell go env GOOS)
+	endif
+	ifeq ($(origin GOARCH), undefined)
+		GOARCH := $(shell go env GOARCH)
+	endif
+	PLATFORM := $(GOOS)_$(GOARCH)
+	# Use linux as the default OS when building images
+	IMAGE_PLAT := linux_$(GOARCH)
+else
+	GOOS := $(word 1, $(subst _, ,$(PLATFORM)))
+	GOARCH := $(word 2, $(subst _, ,$(PLATFORM)))
+	IMAGE_PLAT := $(PLATFORM)
+endif
+
 
 # Linux command settings
 FIND := find . ! -path './image/*' ! -path './vendor/*' ! -path './bin/*'
@@ -108,7 +132,6 @@ all: tidy add-copyright lint cover build
 .PHONY: build
 build: go.build.verify $(addprefix go.build., $(addprefix $(PLATFORM)., $(BINS)))
 
-## build.%: Builds a binary of the specified directory.
 .PHONY: build.%
 build.%:
 	@echo "$(shell go version)"
@@ -206,5 +229,4 @@ clean:
 help: Makefile
 	@printf "\n\033[1mUsage: make <TARGETS> ...\033[0m\n\n\\033[1mTargets:\\033[0m\n\n"
 	@sed -n 's/^##//p' $< | awk -F':' '{printf "\033[36m%-28s\033[0m %s\n", $$1, $$2}' | sed -e 's/^/ /'
-
 ################################################################################
