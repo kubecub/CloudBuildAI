@@ -9,6 +9,9 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/kubecub/CloudBuildAI/pkg/log"
+	"github.com/kubecub/CloudBuildAI/pkg/common"
+
 	"github.com/kubecub/CloudBuildAI/pkg/version"
 	"github.com/kubecub/log"
 	"github.com/spf13/cobra"
@@ -85,7 +88,7 @@ func initConfig() {
 
 	viper.AutomaticEnv() // read in environment variables that match
 
-	if err := logger.Init(logger.LogOptions{
+	if err := log.Init(log.LogOptions{
 		LogToFile:            rootOpt.logToFile,
 		Verbose:              rootOpt.debugModeOn,
 		RemoteLoggerURL:      rootOpt.remoteLoggerURL,

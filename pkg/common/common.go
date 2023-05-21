@@ -1,5 +1,7 @@
 package common
 
+import "github.com/mitchellh/go-homedir"
+
 // Default dir and file path
 const (
 	EtcDir                   = "etc"
@@ -16,3 +18,11 @@ const (
 	StaticPodDir             = "/etc/kubernetes/manifests"
 	LvsCareRepoAndTag        = "kubecubio/lvscare:v1.1.3-beta.8"
 )
+
+func GetHomeDir() string {
+	home, err := homedir.Dir()
+	if err != nil {
+		return "/root"
+	}
+	return home
+}
