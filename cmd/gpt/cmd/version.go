@@ -18,14 +18,14 @@ var (
 	shortPrint bool
 	output     string
 )
-var cbaErr error
+var kubecubErr error
 
 func NewVersionCmd() *cobra.Command {
 	versionCmd := &cobra.Command{
 		Use:     "version",
 		Short:   "Print version info",
 		Args:    cobra.NoArgs,
-		Example: `cba version`,
+		Example: `kubecub version`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			// Validate validates the provided options.
 			if output != "" && output != "yaml" && output != "json" {
@@ -45,7 +45,7 @@ func NewVersionCmd() *cobra.Command {
 
 func PrintInfo() error {
 	OutputInfo := &version.Output{}
-	OutputInfo.CbaVersion = version.Get()
+	OutputInfo.kubecubVersion = version.Get()
 
 	if err := PrintToStd(OutputInfo); err != nil {
 		return err
@@ -76,5 +76,5 @@ func PrintToStd(OutputInfo *version.Output) error {
 		// However, we follow a policy of never panicking.
 		return fmt.Errorf("versionOptions were not validated: --output=%q should have been rejected", output)
 	}
-	return cbaErr
+	return kubecubErr
 }

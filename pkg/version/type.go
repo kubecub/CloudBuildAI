@@ -24,7 +24,7 @@ type Info struct {
 }
 
 type Output struct {
-	CbaVersion        Info               `json:"cbaVersion,omitempty" yaml:"cbaVersion,omitempty"`
+	kubecubVersion    Info               `json:"kubecubVersion,omitempty" yaml:"kubecubVersion,omitempty"`
 	CriRuntimeVersion *CriRuntimeVersion `json:"criVersionInfo,omitempty" yaml:"criVersionInfo,omitempty"`
 	KubernetesVersion *KubernetesVersion `json:"kubernetesVersionInfo,omitempty" yaml:"kubernetesVersionInfo,omitempty"`
 	K0sVersion        *k0sVersion        `json:"k0sVersionInfo,omitempty" yaml:"k0sVersionInfo,omitempty"`

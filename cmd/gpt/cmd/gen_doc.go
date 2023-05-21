@@ -20,7 +20,7 @@ func NewGenDocCommand() *cobra.Command {
 	genDocCommand := &GenDocCommand{}
 	genDocCommand.cmd = &cobra.Command{
 		Use:           "gen-doc",
-		Short:         "generate document for sealer CLI with MarkDown format",
+		Short:         "generate document for kubecub CLI with MarkDown format",
 		Args:          cobra.NoArgs,
 		SilenceErrors: true,
 		SilenceUsage:  true,

@@ -30,7 +30,7 @@ func Get() Info {
 	}
 }
 
-// GetSingleVersion returns single version of cba
+// GetSingleVersion returns single version of kubecub
 func GetSingleVersion() string {
 	return gitVersion
 }
