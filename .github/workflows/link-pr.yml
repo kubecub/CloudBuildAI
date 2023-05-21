@@ -16,6 +16,11 @@ on:
     branches: [ main ]
 
 jobs:
+  test:
+    steps:
+      - name: Get PR labels
+        id: pr-labels
+        uses: joerick/pr-labels-action@v1.0.8
   linkChecker:
     runs-on: ubuntu-latest
     steps:
