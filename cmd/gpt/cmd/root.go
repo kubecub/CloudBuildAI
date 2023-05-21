@@ -12,14 +12,23 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var longRootCmdDescription = `sealer is a tool to seal application's all dependencies and Kubernetes
-into sealer image by Kubefile, distribute this application anywhere via sealer image, 
-and run it within any cluster with Clusterfile in one command.
+type rootOpts struct {
+
+}
+
+var rootOpt rootOpts
+
+const (
+	colorModeNever  = "never"
+	colorModeAlways = "always"
+)
+
+var longRootCmdDescription = `cba automatic Kubernetes yaml and dockerfile generation via chatgpt
 `
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:           "sealer",
+	Use:           "cba",
 	Short:         "A tool to build, share and run any distributed applications.",
 	Long:          longRootCmdDescription,
 	SilenceUsage:  true,
@@ -30,7 +39,12 @@ var rootCmd = &cobra.Command{
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
-		log.Errorf("sealer-%s: %v", version.GetSingleVersion(), err)
+		log.Errorf("cba-%s: %v", version.GetSingleVersion(), err)
 		os.Exit(1)
 	}
+}
+
+
+func init() {
+
 }
