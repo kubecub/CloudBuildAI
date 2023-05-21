@@ -194,7 +194,7 @@ copyright-add:
 	@addlicense -y $(shell date +"%Y") -v -c "KubeCub & Xinwei Xiong(cubxxw)." -f $(LICENSE_TEMPLATE) $(CODE_DIRS)
 	@echo "===========> End the copyright is added..."
 
-## go.clean: Clean all builds.
+## clean: Clean all builds.
 .PHONY: clean
 clean:
 	@echo "===========> Cleaning all builds OUTPUT_DIR($(OUTPUT_DIR))"
