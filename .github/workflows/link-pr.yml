@@ -16,16 +16,10 @@ on:
     branches: [ main ]
 
 jobs:
-  test:
-    steps:
-      - name: Get PR labels
-        id: pr-labels
-        uses: joerick/pr-labels-action@v1.0.8
   linkChecker:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
       - name: Link Checker
         id: lychee
         uses: lycheeverse/lychee-action@v1.7.0
@@ -51,4 +45,8 @@ jobs:
           title: Bug reports for links in kubecub docs
           content-filepath: ./lychee/out.md
           labels: kind/documentation, triage/unresolved, report
+          token: ${{ secrets.BOT_GITHUB_TOKEN }}
+      - name: PR labels
+        uses: joerick/pr-labels-action@v1.0.6
+        with:
           token: ${{ secrets.BOT_GITHUB_TOKEN }}
