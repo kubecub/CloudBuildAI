@@ -7,8 +7,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v7
     - name: Check for typos
-      run: ./tools/typos ./CONTRIBUTING.md ./README.md
-      working-directory: ./
+      uses: crate-ci/typos@v1.51.1
+      with:
+        files: ./CONTRIBUTING.md ./README.md
 
