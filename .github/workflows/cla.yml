@@ -25,8 +25,89 @@ jobs:
   CLAAssistant:
     runs-on: ubuntu-latest
     steps:
+      - name: Check existing contributor exemptions without external writes
+        id: exemptions
+        if: github.event.pull_request || github.event.issue.pull_request
+        uses: actions/github-script@v8
+        env:
+          CLA_ALLOWLIST: ${{ env.OPEN_IM_SERVER_ALLOWLIST }}
+        with:
+          github-token: ${{ github.token }}
+          script: |
+            const query = `query($owner: String!, $repo: String!, $number: Int!, $cursor: String) {
+              repository(owner: $owner, name: $repo) {
+                pullRequest(number: $number) {
+                  headRefOid
+                  commits(first: 100, after: $cursor) {
+                    totalCount
+                    nodes { commit { author { user { login } } } }
+                    pageInfo { hasNextPage endCursor }
+                  }
+                }
+              }
+            }`;
+            const verifyQuery = `query($owner: String!, $repo: String!, $number: Int!) {
+              repository(owner: $owner, name: $repo) {
+                pullRequest(number: $number) {
+                  headRefOid
+                  commits(first: 1) { totalCount }
+                }
+              }
+            }`;
+            const eventHead = context.eventName === 'pull_request_target'
+              ? context.payload.pull_request?.head?.sha : null;
+            if (context.eventName === 'pull_request_target' && !eventHead) {
+              throw new Error('Missing event head for CLA exemptions');
+            }
+            const commits = [];
+            const seenCursors = new Set();
+            let cursor = null;
+            let totalCount;
+            let lockedHead = eventHead;
+            do {
+              const result = await github.graphql(query, {
+                ...context.repo,
+                number: context.issue.number,
+                cursor,
+              });
+              const pull = result.repository.pullRequest;
+              if (!pull.headRefOid || (lockedHead && lockedHead !== pull.headRefOid)) {
+                throw new Error('PR head changed while checking CLA exemptions');
+              }
+              lockedHead = pull.headRefOid;
+              const page = pull.commits;
+              if (totalCount !== undefined && totalCount !== page.totalCount) {
+                throw new Error('PR commits changed while checking CLA exemptions');
+              }
+              totalCount = page.totalCount;
+              commits.push(...page.nodes);
+              cursor = page.pageInfo.hasNextPage ? page.pageInfo.endCursor : null;
+              if (page.pageInfo.hasNextPage && (!cursor || seenCursors.has(cursor))) {
+                throw new Error('Incomplete CLA exemption pagination');
+              }
+              if (cursor) seenCursors.add(cursor);
+            } while (cursor);
+            if (commits.length !== totalCount) throw new Error('Incomplete CLA exemption commit list');
+            const finalResult = await github.graphql(verifyQuery, {
+              ...context.repo,
+              number: context.issue.number,
+            });
+            const finalPull = finalResult.repository.pullRequest;
+            if (finalPull.headRefOid !== lockedHead || finalPull.commits.totalCount !== totalCount) {
+              throw new Error('PR changed before publishing CLA exemptions');
+            }
+            const patterns = process.env.CLA_ALLOWLIST.split(',').map(value => value.trim());
+            const isExempt = login => patterns.some(pattern => {
+              if (!pattern.includes('*')) return pattern === login;
+              const escaped = pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+              return new RegExp(escaped.split('\\*').join('.*')).test(login);
+            });
+            const allExempt = commits.length > 0 && commits.every(node =>
+              node.commit.author.user && isExempt(node.commit.author.user.login));
+            core.setOutput('all_exempt', String(allExempt));
+            core.info(`Checked ${commits.length} linked commit author identities against the existing CLA allowlist.`);
       - name: "CLA Assistant"
-        if: (github.event.comment.body == 'recheck' || github.event.comment.body == 'I have read the CLA Document and I hereby sign the CLA') || github.event_name == 'pull_request_target'
+        if: steps.exemptions.outputs.all_exempt != 'true' && ((github.event.comment.body == 'recheck' || github.event.comment.body == 'I have read the CLA Document and I hereby sign the CLA') || github.event_name == 'pull_request_target')
         uses: contributor-assistant/github-action@v2.3.0
         env:
           GITHUB_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN }}
