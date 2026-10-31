@@ -4,13 +4,8 @@
 
 ## 前言
 
-🔮 在我的 Slack 工作区中，集成了多个 AI，分别有 ChatGPT 4、ChatGPT 3.5、Claude ……
+本文保留早期 Auto-GPT Classic 的使用记录；当前使用方式请参阅文末的作者博客。关于本项目的问题和建议，请通过 [GitHub Issues](https://github.com/kubecub/CloudBuildAI/issues) 交流。
 
-我们可以通过 Slack 免费并且无限制的和 AI 交互，欢迎大家加入到 Slack，这里是 链接：
-
-[https://join.slack.com/t/kubecub/shared_invite/zt-1se0k2bae-lkYzz0_T~BYh3rjkvlcUqQ](https://join.slack.com/t/kubecub/shared_invite/zt-1se0k2bae-lkYzz0_T~BYh3rjkvlcUqQ)
-
-![image-20230514215132365](http://sm.nsddd.top/sm202305142151717.png)
 
 
 
@@ -20,7 +15,7 @@
 
 得益于 Auto-GPT 的出色技术，可以高精度和高效率地自动执行许多任务。 它利用了 GPT-4 强大的自然语言处理功能。
 
-我们甚至可以通过它来实现更多的自动化的工作，比如说前一节 [在 Sealos 上开发一款 AI 自动云原生化项目自动上线工具](./49.md)
+我们甚至可以通过它来实现更多的自动化的工作，比如在 Sealos 上开发一款 AI 自动云原生化项目自动上线工具。
 
 
 
@@ -90,7 +85,7 @@ Auto GPT 可用于编码作业生成完整的程序或代码片段。Auto GPT �
 
 ## 搭建和设置环境
 
-如果你可以**[使用GPT-4](https://www.wbolt.com/how-to-use-gpt-4-free.html) API**，Auto-GPT的效果最好，因为它更善于思考并得出结论。它也不太容易产生幻觉。如果你还没有访问权限，你可以[使用这里的链接](https://www.wbolt.com/go?_=18a71268abaHR0cHM6Ly9vcGVuYWkuY29tL3dhaXRsaXN0L2dwdC00LWFwaQ%3D%3D)加入GPT-4 API访问的等待名单。然而，你也可以使用普通的OpenAI API与GPT-3.5模型。
+在这份早期教程中，Auto-GPT 使用 GPT-4 或 GPT-3.5 模型。这些历史型号不代表当前仍可使用；模型的当前状态请以 [OpenAI 的 GPT-4 官方说明](https://developers.openai.com/api/docs/models/gpt-4) 为准，不再使用旧的 API 等待名单。
 
 **准备工作：**
 
@@ -143,7 +138,6 @@ OPENAI_API_KEY=your-openai-api-key
 
 给一个名字，如 `autogpt`，然后点击 `Create Key`
 
-![image-20230503171039991](http://sm.nsddd.top/sm202305031712718.png)
 
 复制 Key Value，用 `vim` 打开，将其粘贴在 `PINECONE_API_KEY` 旁边。
 
@@ -237,15 +231,13 @@ LLM 任务自动化也可能开辟新的市场和就业机会。如果企业和�
 
 + [https://agentgpt.reworkd.ai/zh](https://agentgpt.reworkd.ai/zh)
 
-在这里，添加你的OpenAI API密钥。你可以从[这里](https://www.wbolt.com/go?_=e7e2fef44aaHR0cHM6Ly9wbGF0Zm9ybS5vcGVuYWkuY29tL2FjY291bnQvYXBpLWtleXM%3D)**获得API密钥**。如果你不能访问[GPT-4](https://www.wbolt.com/how-to-use-gpt-4-free.html) API，选择 `gpt-3.5-turbo` 作为模型，然后点击 `Save`
+这里记录的是早期 AgentGPT 界面中的 API 密钥配置方式。认证方式请参阅 [OpenAI 官方认证说明](https://developers.openai.com/api/reference/overview#authentication)；模型的当前状态请参阅 [GPT-4 官方说明](https://developers.openai.com/api/docs/models/gpt-4)，不要将本教程中的历史型号视为当前可用型号。
 
-![image-20230503174431508](http://sm.nsddd.top/sm202305031744911.png)
 
 接下来，给你的人工智能代理起个名字，并设定你希望实现的目标。现在，点击Auto-GPT AI的 `Deploy Agent`，开始考虑你的投入。
 
 我发现我没钱了~
 
-![image-20230503175554002](http://sm.nsddd.top/sm202305031755504.png)
 
 一旦任务完成，你可以点击 “**Save**“或 “Copy” 来获得最终结果。
 
@@ -257,7 +249,7 @@ LLM 任务自动化也可能开辟新的市场和就业机会。如果企业和�
 
 + [如何安装和使用自主人工智能工具Auto-GPT](https://www.wbolt.com/auto-gpt.html)
 + [使用 Auto-GPT 的八种方法](https://juejin.cn/post/7226665757882449978)
-+ [知乎：安装和使用 Auto-GPT](https://zhuanlan.zhihu.com/p/621854926)
++ [AutoGPT 2026：从 Classic 实验到 Platform 的迁移指南（作者博客）](https://cubxxw.com/zh/ai-agent/posts/use-auto-gpt/)
 + [Auto-GPT-ZH 自主 GPT4 实验](https://github.com/kaqijiang/Auto-GPT-ZH)
 + [高级 LLMOps 架构](https://matt-rickard.com/a-high-level-llmops-architecture)
 

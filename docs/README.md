@@ -6,5 +6,5 @@
 
 ## 目录
 
-+ [autogpt 的教程](./autogpt.md)
++ [autogpt 的教程](./augogpt.md)
 + [k8sgpt 的教程](./k8sgpt.md)
