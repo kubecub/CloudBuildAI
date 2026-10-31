@@ -1,0 +1,89 @@
+name: Lychee action contracts
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/link-pr.yml'
+      - '.github/workflows/lychee-action-contracts.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  local-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        fixture: [healthy, broken, empty]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Prepare synthetic local files
+        id: fixture
+        env:
+          LYCHEE_CONTRACT_KIND: ${{ matrix.fixture }}
+        run: |
+          lychee_contract_dir="$RUNNER_TEMP/lychee-contract-$LYCHEE_CONTRACT_KIND"
+          mkdir -p "$lychee_contract_dir"
+          : > "$lychee_contract_dir/config.toml"
+          case "$LYCHEE_CONTRACT_KIND" in
+            healthy)
+              printf '[local](target.md)\n' > "$lychee_contract_dir/input.md"
+              printf 'Synthetic target.\n' > "$lychee_contract_dir/target.md"
+              ;;
+            broken)
+              printf '[local](missing.md)\n' > "$lychee_contract_dir/input.md"
+              ;;
+            empty)
+              printf 'Synthetic content without links.\n' > "$lychee_contract_dir/input.md"
+              ;;
+            *) exit 1 ;;
+          esac
+          printf 'dir=%s\n' "$lychee_contract_dir" >> "$GITHUB_OUTPUT"
+      - name: Exercise the actual target action offline
+        id: lychee
+        continue-on-error: true
+        uses: lycheeverse/lychee-action@v2.0.2
+        with:
+          args: --offline --no-ignore --include '^file://' --config '${{ steps.fixture.outputs.dir }}/config.toml' --no-progress '${{ steps.fixture.outputs.dir }}/input.md'
+          fail: true
+          failIfEmpty: true
+          output: ${{ steps.fixture.outputs.dir }}/report.md
+          token: ${{ github.token }}
+      - name: Exercise the production report condition without creating an issue
+        id: report_probe
+        if: >-
+          always() && !cancelled() &&
+          steps.lychee.outcome == 'failure' &&
+          steps.lychee.outputs.exit_code != '' &&
+          steps.lychee.outputs.exit_code != '0'
+        env:
+          LYCHEE_CONTRACT_REPORT: ${{ steps.fixture.outputs.dir }}/report.md
+        run: test -s "$LYCHEE_CONTRACT_REPORT"
+      - name: Require the expected action and consumer outcomes
+        if: always() && !cancelled()
+        env:
+          LYCHEE_CONTRACT_KIND: ${{ matrix.fixture }}
+          LYCHEE_CONTRACT_OUTCOME: ${{ steps.lychee.outcome }}
+          LYCHEE_CONTRACT_EXIT_CODE: ${{ steps.lychee.outputs.exit_code }}
+          LYCHEE_CONTRACT_REPORT_OUTCOME: ${{ steps.report_probe.outcome }}
+        run: |
+          case "$LYCHEE_CONTRACT_EXIT_CODE" in ''|*[!0-9]*) exit 1 ;; esac
+          case "$LYCHEE_CONTRACT_KIND" in
+            healthy)
+              test "$LYCHEE_CONTRACT_OUTCOME" = success
+              test "$LYCHEE_CONTRACT_EXIT_CODE" = 0
+              test "$LYCHEE_CONTRACT_REPORT_OUTCOME" = skipped
+              ;;
+            broken|empty)
+              test "$LYCHEE_CONTRACT_OUTCOME" = failure
+              test "$LYCHEE_CONTRACT_EXIT_CODE" != 0
+              test "$LYCHEE_CONTRACT_REPORT_OUTCOME" = success
+              ;;
+            *) exit 1 ;;
+          esac

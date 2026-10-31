@@ -12,6 +12,8 @@ on:
       - '**.md'
       - 'docs/**'
       - '.lycheeignore'
+      - '.github/workflows/link-pr.yml'
+      - '.github/workflows/lychee-action-contracts.yml'
   push:
     branches: [ main ]
 
@@ -23,7 +25,7 @@ jobs:
 
       - name: Link Checker
         id: lychee
-        uses: lycheeverse/lychee-action@v1.7.0
+        uses: lycheeverse/lychee-action@v2.0.2
         with:
             # For parameter description, see https://github.com/lycheeverse/lychee#commandline-parameters
             # Actions Link address -> https://github.com/lycheeverse/lychee-action
@@ -36,11 +38,16 @@ jobs:
             # docs/.vitepress/dist the site directory to check
             # ./*.md all markdown files in the root directory
           args: --verbose  -E -i --no-progress --exclude-path './CHANGELOG' './**/*.md'
-        env:
-          GITHUB_TOKEN: ${{secrets.GH_PAT}}
+          fail: true
+          failIfEmpty: true
+          token: ${{ secrets.GH_PAT || github.token }}
 
       - name: Create Issue From File
-        if: env.lychee_exit_code != 0
+        if: >-
+          always() && !cancelled() &&
+          steps.lychee.outcome == 'failure' &&
+          steps.lychee.outputs.exit_code != '' &&
+          steps.lychee.outputs.exit_code != '0'
         uses: peter-evans/create-issue-from-file@v4
         with:
           title: Bug reports for links in kubecub docs
