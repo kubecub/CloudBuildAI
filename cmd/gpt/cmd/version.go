@@ -45,7 +45,7 @@ func NewVersionCmd() *cobra.Command {
 
 func PrintInfo() error {
 	OutputInfo := &version.Output{}
-	OutputInfo.kubecubVersion = version.Get()
+	OutputInfo.KubecubVersion = version.Get()
 
 	if err := PrintToStd(OutputInfo); err != nil {
 		return err

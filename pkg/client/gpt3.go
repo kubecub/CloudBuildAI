@@ -4,36 +4,16 @@
 
 package client
 
-import (
-	"net/http"
-	"time"
-)
+import upstream "github.com/PullRequestInc/go-gpt3"
 
-type client struct {
-	baseURL       string
-	apiKey        string
-	userAgent     string
-	httpClient    *http.Client
-	defaultEngine string
-	idOrg         string
+type ClientOption = upstream.ClientOption
+
+// NewClient returns the original SDK client through the existing public interface.
+func NewClient(apiKey string, options ...ClientOption) Client {
+	return upstream.NewClient(apiKey, options...)
 }
 
-// NewClient returns a new OpenAI GPT-3 API client. An apiKey is required to use the client
-func NewClient(apiKey string, options ...ClientOption) Client {
-	httpClient := &http.Client{
-		Timeout: time.Duration(defaultTimeoutSeconds * time.Second),
-	}
-
-	c := &client{
-		userAgent:     defaultUserAgent,
-		apiKey:        apiKey,
-		baseURL:       defaultBaseURL,
-		httpClient:    httpClient,
-		defaultEngine: DefaultEngine,
-		idOrg:         "",
-	}
-	for _, o := range options {
-		o(c)
-	}
-	return c
+// IntPtr retains the helper used by the existing chat example.
+func IntPtr(value int) *int {
+	return upstream.IntPtr(value)
 }

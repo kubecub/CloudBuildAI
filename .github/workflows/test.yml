@@ -4,22 +4,64 @@
 # you may not use this file except in compliance with the License.
 
 name: Test Makefile build
-
-on: [push]
-
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: go-contracts-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      
-      - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install -y make
-      
-      - name: Build project
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version: '1.26.10'
+          cache: false
+      - name: Test the actual logger, formatter, Writer and CLI contracts
+        run: go test -race -mod=readonly -count=1 -timeout=60s ./...
+      - name: Build both actual commands with the project Makefile
         run: make build
-      
-      - name: Test build artifacts
+      - name: Read the real version command without calling an AI provider
+        shell: bash
         run: |
-          # Add your tests here to check the build artifacts
+          test -x bin/platforms/linux/amd64/chat
+          bin/platforms/linux/amd64/gpt version --output=json > "$RUNNER_TEMP/version.json"
+          python3 - <<'PYCODE'
+          import json, os
+          from pathlib import Path
+          data = json.loads((Path(os.environ['RUNNER_TEMP']) / 'version.json').read_text())
+          assert data['kubecubVersion']['gitVersion']
+          assert data['kubecubVersion']['goVersion'].startswith('go1.26.')
+          PYCODE
+      - name: Detect the old Writer regression without changing the tested source
+        shell: bash
+        run: |
+          mkdir "$RUNNER_TEMP/logrus-regression"
+          git archive HEAD | tar -x -C "$RUNNER_TEMP/logrus-regression"
+          cd "$RUNNER_TEMP/logrus-regression"
+          go mod edit -require=github.com/sirupsen/logrus@v1.9.1
+          go mod tidy
+          go list -m github.com/sirupsen/logrus
+          legacy_logrus_version="$(go list -m -f '{{.Version}}' github.com/sirupsen/logrus)"
+          if [ "$legacy_logrus_version" != 'v1.9.1' ]; then
+            echo "MVS selected $legacy_logrus_version instead of the required v1.9.1 negative control"
+            exit 1
+          fi
+          set +e
+          go test -v -count=1 -run '^TestWriterContract$/^lines$' -timeout=15s ./pkg/log > "$RUNNER_TEMP/logrus-regression.log" 2>&1
+          regression_status=$?
+          set -e
+          if [ "$regression_status" -eq 0 ]; then
+            cat "$RUNNER_TEMP/logrus-regression.log"
+            echo 'Old Writer regression was not detected'
+            exit 1
+          fi
+          cat "$RUNNER_TEMP/logrus-regression.log"
+          grep -Eq -- 'Writer changed line/EOF contract:|panic: bufio.Scan: too many empty tokens without progressing' "$RUNNER_TEMP/logrus-regression.log"

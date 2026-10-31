@@ -5,7 +5,7 @@
 ################################################################################
 # ========================== Capture Environment ===============================
 # get the repo root and output path
-ROOT_PACKAGE=github.com/kubecub/feishu-sheet-parser
+ROOT_PACKAGE=github.com/kubecub/CloudBuildAI
 OUT_DIR=$(REPO_ROOT)/_output
 # ==============================================================================
 
@@ -85,7 +85,7 @@ LICENSE_TEMPLATE ?= $(ROOT_DIR)/scripts/LICENSE_TEMPLATES
 # ==============================================================================
 # Build definition
 
-GO_SUPPORTED_VERSIONS ?= 1.18|1.19|1.20
+GO_SUPPORTED_VERSIONS ?= 1.26
 GO_LDFLAGS += -X $(VERSION_PACKAGE).GitVersion=$(VERSION) \
 	-X $(VERSION_PACKAGE).GitCommit=$(GIT_COMMIT) \
 	-X $(VERSION_PACKAGE).GitTreeState=$(GIT_TREE_STATE) \

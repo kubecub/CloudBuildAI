@@ -11,14 +11,20 @@ type LogOptions struct {
 	// Verbose: kubecub log level,if it is ture will set debug log mode.
 	Verbose bool
 	// DisableColor if true will disable outputting colors.
-	DisableColor         bool
-	RemoteLoggerURL      string
+	DisableColor bool
+	// Remote logging is unsupported; RemoteLoggerURL must be empty.
+	RemoteLoggerURL string
+	// Retained for compatibility with existing options.
 	RemoteLoggerTaskName string
 	// LogToFile flag represent whether write log to disk, default is false.
 	LogToFile bool
 }
 
 func Init(options LogOptions) error {
+	if options.RemoteLoggerURL != "" {
+		return errors.New("remote logging is not supported")
+	}
+
 	if options.Verbose {
 		logrus.SetLevel(logrus.DebugLevel)
 	} else {
@@ -39,13 +45,10 @@ func Init(options LogOptions) error {
 		logrus.AddHook(fh)
 	}
 
-	if options.RemoteLoggerURL != "" {
-		rl, err := NewRemoteLogHook(options.RemoteLoggerURL, options.RemoteLoggerTaskName)
-		if err != nil {
-			return errors.Errorf("failed to init log remote hook: %v", err)
-		}
-		logrus.AddHook(rl)
-	}
-
 	return nil
+}
+
+// Errorf writes through the logger configured by Init.
+func Errorf(format string, args ...interface{}) {
+	logrus.Errorf(format, args...)
 }
