@@ -10,9 +10,8 @@
 
 <p align=center>
 <a href="https://goreportcard.com/report/github.com/kubecub/CloudBuildAI"><img src="https://goreportcard.com/badge/github.com/kubecub/CloudBuildAI" alt="A+"></a>
-<a href="https://github.com/issues?q=org%kubecub+is%3Aissue+label%3A%22good+first+issue%22+no%3Aassignee"><img src="https://img.shields.io/github/issues/kubecub/CloudBuildAI/good%20first%20issue?logo=%22github%22" alt="good first"></a>
+<a href="https://github.com/search?q=org%3Akubecub+is%3Aissue+label%3A%22good+first+issue%22+no%3Aassignee&amp;type=issues"><img src="https://img.shields.io/github/issues/kubecub/CloudBuildAI/good%20first%20issue?logo=%22github%22" alt="good first"></a>
 <a href="https://github.com/kubecub/CloudBuildAI"><img src="https://img.shields.io/github/stars/kubecub/CloudBuildAI.svg?style=flat&logo=github&colorB=deeppink&label=stars"></a>
-<a href="https://join.slack.com/t/kubecub/shared_invite/zt-1se0k2bae-lkYzz0_T~BYh3rjkvlcUqQ"><img src="https://img.shields.io/badge/Slack-100%2B-blueviolet?logo=slack&amp;logoColor=white"></a>
 <a href="https://github.com/kubecub/CloudBuildAI/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-Apache--2.0-green"></a>
 <a href="https://golang.org/"><img src="https://img.shields.io/badge/Language-Go-blue.svg"></a>
 </p>
@@ -101,7 +100,6 @@ Here, click `API Keys` on the left sidebar, and click `Create API Key` on the ri
 
 Give a name, such as `autogpt`, and click `Create Key`
 
-![image-20230503171039991](http://sm.nsddd.top/sm202305201604736.png)
 
 Copy the Key Value, open with `vim`, and paste it next to `PINECONE_API_KEY`.
 
@@ -340,7 +338,7 @@ Catalog standardization design structure:
 
 We welcome everyone to join us and contribute to CloudBuildAI, whether you are new to open source or professional. We are committed to promoting an open source culture, so we offer community members neighborhood prizes and reward money in recognition of their contributions. We believe that by working together, we can build a strong community and make valuable open source tools and resources available to more people. So if you are interested in CloudBuildAI, please join our community and start contributing your ideas and skills!
 
-We take notes of each [biweekly meeting](https://github.com/kubecub/CloudBuildAI/issues/2) in [GitHub discussions](https://github.com/kubecub/CloudBuildAI/discussions/categories/meeting), and our minutes are written in [Google Docs](https://docs.google.com/document/d/1nx8MDpuG74NASx081JcCpxPgDITNTpIIos0DS6Vr9GU/edit?usp=sharing).
+See the existing [biweekly meeting issue](https://github.com/kubecub/CloudBuildAI/issues/2) and [Google Docs minutes](https://docs.google.com/document/d/1nx8MDpuG74NASx081JcCpxPgDITNTpIIos0DS6Vr9GU/edit?usp=sharing). Use [GitHub Issues](https://github.com/kubecub/CloudBuildAI/issues) for project discussion.
 
 CloudBuildAI maintains a [public roadmap](https://github.com/kubecub/community/tree/main/roadmaps). It gives a a high-level view of the main priorities for the project, the maturity of different features and projects, and how to influence the project direction.
 
@@ -350,7 +348,7 @@ kubecub Our goal is to build a top-level open source community. We have a set of
 
 If you'd like to contribute to this CloudBuildAI repository, please read our [contributor documentation](https://github.com/kubecub/CloudBuildAI/blob/main/CONTRIBUTING.md).
 
-Before you start, please make sure your changes are in demand. The best for that is to create a [new discussion](https://github.com/kubecub/CloudBuildAI/discussions/new/choose) OR [Slack Communication](https://join.slack.com/t/kubecub/shared_invite/zt-1se0k2bae-lkYzz0_T~BYh3rjkvlcUqQ), or if you find an issue, [report it](https://github.com/kubecub/CloudBuildAI/issues/new/choose) first.
+Before you start, please make sure your changes are in demand. Use this repository's [Issues](https://github.com/kubecub/CloudBuildAI/issues) to discuss a proposal or report a problem first.
 
 > 👉 **Note:** The CloudBuildAI project is a preview version under development, all documents and codes are for reference only. The CloudBuildAI project may change frequently, and we do not guarantee that the information provided is the latest or accurate.
 
