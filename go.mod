@@ -16,6 +16,7 @@ require (
 )
 
 require (
+	github.com/PullRequestInc/go-gpt3 v1.1.15
 	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect
 	github.com/fatih/color v1.15.0 // indirect
 	github.com/fsnotify/fsnotify v1.9.0 // indirect
