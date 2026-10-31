@@ -19,6 +19,9 @@ on:
 
 jobs:
   linkChecker:
+    permissions:
+      contents: read
+      issues: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -48,9 +51,15 @@ jobs:
           steps.lychee.outcome == 'failure' &&
           steps.lychee.outputs.exit_code != '' &&
           steps.lychee.outputs.exit_code != '0'
+          && github.actor != '' && github.actor != 'dependabot[bot]'
+          && (github.event_name == 'push' ||
+              (github.event_name == 'pull_request' &&
+               github.event.pull_request.head.repo.full_name == github.repository &&
+               github.event.pull_request.user.login != '' &&
+               github.event.pull_request.user.login != 'dependabot[bot]'))
         uses: peter-evans/create-issue-from-file@v4
         with:
           title: Bug reports for links in kubecub docs
           content-filepath: ./lychee/out.md
           labels: kind/documentation, triage/unresolved, report
-          token: ${{ secrets.BOT_GITHUB_TOKEN }}
+          token: ${{ github.token }}
