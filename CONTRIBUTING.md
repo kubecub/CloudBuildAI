@@ -310,7 +310,7 @@ We choose GitHub as the primary place for CloudBuildAI to collaborate. So the la
 + help solve other user's problems;
 + help review other's [PR](https://github.com/kubecub/CloudBuildAI/pulls) design; 
 + discuss about CloudBuildAI to make things clearer;
-+ advocate [CloudBuildAI](https://google.com/search?q=CloudBuildAI) technology beyond GitHub;
++ advocate [CloudBuildAI](https://github.com/kubecub/CloudBuildAI) technology beyond GitHub;
 + write bCloudBuildAIs on CloudBuildAI and so on.
 
 In a word, **ANY HELP IS CONTRIBUTION.**
