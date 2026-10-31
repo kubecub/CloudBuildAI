@@ -48,8 +48,14 @@ jobs:
           cd "$RUNNER_TEMP/logrus-regression"
           go mod edit -require=github.com/sirupsen/logrus@v1.9.1
           go mod tidy
+          go list -m github.com/sirupsen/logrus
+          legacy_logrus_version="$(go list -m -f '{{.Version}}' github.com/sirupsen/logrus)"
+          if [ "$legacy_logrus_version" != 'v1.9.1' ]; then
+            echo "MVS selected $legacy_logrus_version instead of the required v1.9.1 negative control"
+            exit 1
+          fi
           set +e
-          go test -count=1 -run '^TestWriterContract$/^lines$' -timeout=15s ./pkg/log > "$RUNNER_TEMP/logrus-regression.log" 2>&1
+          go test -v -count=1 -run '^TestWriterContract$/^lines$' -timeout=15s ./pkg/log > "$RUNNER_TEMP/logrus-regression.log" 2>&1
           regression_status=$?
           set -e
           if [ "$regression_status" -eq 0 ]; then
@@ -57,4 +63,5 @@ jobs:
             echo 'Old Writer regression was not detected'
             exit 1
           fi
-          grep -Eq -- '--- FAIL: TestWriterContract|panic: runtime error|Writer .*timed out' "$RUNNER_TEMP/logrus-regression.log"
+          cat "$RUNNER_TEMP/logrus-regression.log"
+          grep -Eq -- 'Writer changed line/EOF contract:|panic: bufio.Scan: too many empty tokens without progressing' "$RUNNER_TEMP/logrus-regression.log"
